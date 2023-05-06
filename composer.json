@@ -1,6 +1,6 @@
 {
     "name": "sandbox-dev/laravel-translatable",
-    "description": "A Laravel package for multilingual models",
+    "description": "Laravel multilingual models package",
     "license": "MIT",
     "authors": [
         {
