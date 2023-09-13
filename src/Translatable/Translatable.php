@@ -69,9 +69,9 @@ trait Translatable
 		self::$deleteTranslationsCascade = true;
 	}
 
-	public function attributesToArray()
+	public function attributesTranslatableToArray()
 	{
-		$attributes = parent::attributesToArray();
+		$attributes = parent::attributesTranslatableToArray();
 
 		if (
 			(!$this->relationLoaded('translations') && !$this->toArrayAlwaysLoadsTranslations() && is_null(self::$autoloadTranslations))
