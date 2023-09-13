@@ -87,7 +87,7 @@ trait Translatable
 				continue;
 			}
 
-			$attributes[$field] = $this->getTranslatableAttributeOrFallback(null, $field);
+			$attributes[$field] = $this->getAttributeOrFallback(null, $field);
 		}
 
 		return $attributes;
@@ -122,7 +122,7 @@ trait Translatable
 				$this->getTranslationOrNew($key)->fill($values);
 				unset($attributes[$key]);
 			} else {
-				[$attribute, $locale] = $this->getTranslatableAttributeAndLocale($key);
+				[$attribute, $locale] = $this->getAttributeAndLocale($key);
 
 				if (
 					$this->getLocalesHelper()->has($locale)
@@ -137,9 +137,9 @@ trait Translatable
 		return parent::fill($attributes);
 	}
 
-	public function getTranslatableAttribute($key)
+	public function getAttribute($key)
 	{
-		[$attribute, $locale] = $this->getTranslatableAttributeAndLocale($key);
+		[$attribute, $locale] = $this->getAttributeAndLocale($key);
 
 		if ($this->isTranslationAttribute($attribute)) {
 			if ($this->getTranslation($locale) === null) {
@@ -150,15 +150,15 @@ trait Translatable
 			// on it. This way, we can use Eloquent's checking for Mutation, type casting, and
 			// Date fields.
 			if ($this->hasGetMutator($attribute)) {
-				$this->attributes[$attribute] = $this->getTranslatableAttributeOrFallback($locale, $attribute);
+				$this->attributes[$attribute] = $this->getAttributeOrFallback($locale, $attribute);
 
 				return $this->getAttributeValue($attribute);
 			}
 
-			return $this->getTranslatableAttributeOrFallback($locale, $attribute);
+			return $this->getAttributeOrFallback($locale, $attribute);
 		}
 
-		return parent::getTranslatableAttribute($key);
+		return parent::getAttribute($key);
 	}
 
 	public function getDefaultLocale(): ?string
@@ -180,7 +180,7 @@ trait Translatable
 
 		/** @var Model $translation */
 		$translation = new $modelName();
-		$translation->setTranslatableAttribute($this->getLocaleKey(), $locale);
+		$translation->setAttribute($this->getLocaleKey(), $locale);
 		$this->translations->add($translation);
 
 		return $translation;
@@ -266,7 +266,7 @@ trait Translatable
 		$locale = $locale ?: $this->locale();
 
 		foreach ($this->translations as $translation) {
-			if ($translation->getTranslatableAttribute($this->getLocaleKey()) == $locale) {
+			if ($translation->getAttribute($this->getLocaleKey()) == $locale) {
 				return true;
 			}
 		}
@@ -292,9 +292,9 @@ trait Translatable
 		return $newInstance;
 	}
 
-	public function setTranslatableAttribute($key, $value)
+	public function setAttribute($key, $value)
 	{
-		[$attribute, $locale] = $this->getTranslatableAttributeAndLocale($key);
+		[$attribute, $locale] = $this->getAttributeAndLocale($key);
 
 		if ($this->isTranslationAttribute($attribute)) {
 			$this->getTranslationOrNew($locale)->$attribute = $value;
@@ -302,7 +302,7 @@ trait Translatable
 			return $this;
 		}
 
-		return parent::setTranslatableAttribute($key, $value);
+		return parent::setAttribute($key, $value);
 	}
 
 	public function setDefaultLocale(?string $locale)
@@ -373,7 +373,7 @@ trait Translatable
 					$translation->setConnection($connectionName);
 				}
 
-				$translation->setTranslatableAttribute($this->getTranslationRelationKey(), $this->getKey());
+				$translation->setAttribute($this->getTranslationRelationKey(), $this->getKey());
 				$saved = $translation->save();
 			}
 		}
@@ -381,7 +381,7 @@ trait Translatable
 		return $saved;
 	}
 
-	protected function getTranslatableAttributeAndLocale(string $key): array
+	protected function getAttributeAndLocale(string $key): array
 	{
 		if (Str::contains($key, ':')) {
 			return explode(':', $key);
@@ -390,7 +390,7 @@ trait Translatable
 		return [$key, $this->locale()];
 	}
 
-	protected function getTranslatableAttributeOrFallback(?string $locale, string $attribute)
+	protected function getAttributeOrFallback(?string $locale, string $attribute)
 	{
 		$translation = $this->getTranslation($locale);
 
@@ -426,7 +426,7 @@ trait Translatable
 		if (
 			$this->relationLoaded('translation')
 			&& $this->translation
-			&& $this->translation->getTranslatableAttribute($this->getLocaleKey()) == $key
+			&& $this->translation->getAttribute($this->getLocaleKey()) == $key
 		) {
 			return $this->translation;
 		}
