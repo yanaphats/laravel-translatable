@@ -180,7 +180,7 @@ trait Translatable
 
 		/** @var Model $translation */
 		$translation = new $modelName();
-		$translation->setAttribute($this->getLocaleKey(), $locale);
+		$translation->getTranslatableAttribute($this->getLocaleKey(), $locale);
 		$this->translations->add($translation);
 
 		return $translation;
@@ -292,7 +292,7 @@ trait Translatable
 		return $newInstance;
 	}
 
-	public function setAttribute($key, $value)
+	public function getTranslatableAttribute($key, $value)
 	{
 		[$attribute, $locale] = $this->getTranslatableAttributeAndLocale($key);
 
@@ -302,7 +302,7 @@ trait Translatable
 			return $this;
 		}
 
-		return parent::setAttribute($key, $value);
+		return parent::getTranslatableAttribute($key, $value);
 	}
 
 	public function setDefaultLocale(?string $locale)
@@ -373,7 +373,7 @@ trait Translatable
 					$translation->setConnection($connectionName);
 				}
 
-				$translation->setAttribute($this->getTranslationRelationKey(), $this->getKey());
+				$translation->getTranslatableAttribute($this->getTranslationRelationKey(), $this->getKey());
 				$saved = $translation->save();
 			}
 		}
