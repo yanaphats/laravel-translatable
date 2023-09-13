@@ -69,9 +69,9 @@ trait Translatable
 		self::$deleteTranslationsCascade = true;
 	}
 
-	public function attributesTranslatableToArray()
+	public function attributesToArray()
 	{
-		$attributes = parent::attributesTranslatableToArray();
+		$attributes = parent::attributesToArray();
 
 		if (
 			(!$this->relationLoaded('translations') && !$this->toArrayAlwaysLoadsTranslations() && is_null(self::$autoloadTranslations))
@@ -143,16 +143,16 @@ trait Translatable
 
 		if ($this->isTranslationAttribute($attribute)) {
 			if ($this->getTranslation($locale) === null) {
-				return $this->getTranslatableAttributeValue($attribute);
+				return $this->getAttributeValue($attribute);
 			}
 
-			// If the given $attribute has a mutator, we push it to $attributes and then call getTranslatableAttributeValue
+			// If the given $attribute has a mutator, we push it to $attributes and then call getAttributeValue
 			// on it. This way, we can use Eloquent's checking for Mutation, type casting, and
 			// Date fields.
 			if ($this->hasGetMutator($attribute)) {
 				$this->attributes[$attribute] = $this->getTranslatableAttributeOrFallback($locale, $attribute);
 
-				return $this->getTranslatableAttributeValue($attribute);
+				return $this->getAttributeValue($attribute);
 			}
 
 			return $this->getTranslatableAttributeOrFallback($locale, $attribute);
